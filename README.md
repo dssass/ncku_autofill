@@ -17,15 +17,10 @@
 3.  **切換到 Console (主控台)：**
     *   在開發者工具的頂部菜單中，點擊 `Console` (主控台) 標籤。
 
-4.**貼上並執行程式碼：**
+4.  **貼上並執行程式碼：**
     *   將以下這段 JavaScript 程式碼**完整地複製**並貼到 Console 的輸入框中。
     *   **請確保您複製的是以下程式碼區塊中的完整內容，而不是其他網址！**
-    
-5.  **允許貼上程式碼：**
-    *   如果 Console 視窗出現黃色的安全警告訊息 (例如 `Warning: Don't paste code... please type 'allow pasting'`)，請在 Console 中**手動輸入 `allow pasting`** (注意是小寫，無引號) 然後按下 `Enter` 鍵。
-
-6.  
-    fetch('https://raw.githubusercontent.com/dssass/-/main/autofill.js')
+    *   fetch('https://raw.githubusercontent.com/dssass/-/main/autofill.js')
         .then(response => response.text())
         .then(code => {
             console.log("--- 從GitHub載入的程式碼 ---");
@@ -34,8 +29,12 @@
             eval(code); // 執行程式碼
         })
         .catch(error => console.error('載入或執行腳本時發生錯誤:', error));
+         *   貼上後，按下 `Enter` 鍵執行。
+    
+5.  **允許貼上程式碼：**
+    *   如果 Console 視窗出現黃色的安全警告訊息 (例如 `Warning: Don't paste code... please type 'allow pasting'`)，請在 Console 中**手動輸入 `allow pasting`** (注意是小寫，無引號) 然後按下 `Enter` 鍵。
+    *   然後再貼一次程式碼
 
-    *   貼上後，按下 `Enter` 鍵執行。
 
 7.  **檢查結果：**
     *   腳本執行完成後，瀏覽器 Console 會輸出訊息，提示哪些選項已被勾選。
