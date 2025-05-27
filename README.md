@@ -29,7 +29,7 @@
             eval(code); // 執行程式碼
         })
         .catch(error => console.error('載入或執行腳本時發生錯誤:', error));
-         *   貼上後，按下 `Enter` 鍵執行。
+    *   貼上後，按下 `Enter` 鍵執行。
     
 5.  **允許貼上程式碼：**
     *   如果 Console 視窗出現黃色的安全警告訊息 (例如 `Warning: Don't paste code... please type 'allow pasting'`)，請在 Console 中**手動輸入 `allow pasting`** (注意是小寫，無引號) 然後按下 `Enter` 鍵。
