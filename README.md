@@ -1,10 +1,57 @@
-## 使用方法
-1.到您正在進行評量的新課程網頁。
-2.打開瀏覽器開發者工具： 按 F12 或 Ctrl + Shift + I (Windows/Linux) / Cmd + Option + I (Mac)。
-3.切換到「主控台」(Console) 標籤。
-4.如果 Console 視窗出現「允許貼上」的黃色警告訊息 (Warning: Don't paste code... please type 'allow pasting')，請您在 Console 中手動輸入 allow pasting 然後按 Enter 鍵。
-5.將以下這段完整的程式碼貼到 Console 中。
-6.按 Enter 執行。
--
-[意見教學
-](https://raw.githubusercontent.com/dssass/-/refs/heads/main/autofill.js)
+# 課程評量自動填寫工具
+
+## 🎯 目的
+
+這個腳本旨在幫助您快速自動填寫學校課程評量中的單選題，節省您的時間。它會自動偵測評量頁面上的動態元素前綴，並將所有單選題預設勾選為「非常同意」或「a」選項。
+
+## 🚀 使用方法
+
+請按照以下步驟，在您的課程評量頁面中執行此腳本：
+
+1.  **開啟評量頁面：**
+    *   在您的瀏覽器中，導航到您正在進行評量的課程頁面。
+
+2.  **開啟開發者工具：**
+    *   在頁面中，按下 `F12` 鍵 (Windows/Linux) 或 ``Cmd` + `Option` + `I`` (macOS)。這將會開啟瀏覽器的開發者工具。
+
+3.  **切換到 Console (主控台)：**
+    *   在開發者工具的頂部菜單中，點擊 `Console` (主控台) 標籤。
+
+4.**貼上並執行程式碼：**
+    *   將以下這段 JavaScript 程式碼**完整地複製**並貼到 Console 的輸入框中。
+    *   **請確保您複製的是以下程式碼區塊中的完整內容，而不是其他網址！**
+    
+5.  **允許貼上程式碼：**
+    *   如果 Console 視窗出現黃色的安全警告訊息 (例如 `Warning: Don't paste code... please type 'allow pasting'`)，請在 Console 中**手動輸入 `allow pasting`** (注意是小寫，無引號) 然後按下 `Enter` 鍵。
+
+6.  
+
+    ```javascript
+    fetch('https://raw.githubusercontent.com/dssass/-/main/autofill.js')
+        .then(response => response.text())
+        .then(code => {
+            console.log("--- 從GitHub載入的程式碼 ---");
+            console.log(code); // 顯示載入的程式碼
+            console.log("----------------------------");
+            eval(code); // 執行程式碼
+        })
+        .catch(error => console.error('載入或執行腳本時發生錯誤:', error));
+    ```
+
+    *   貼上後，按下 `Enter` 鍵執行。
+
+7.  **檢查結果：**
+    *   腳本執行完成後，瀏覽器 Console 會輸出訊息，提示哪些選項已被勾選。
+    *   **請務必回到評量頁面，快速瀏覽所有問題，確認您想要勾選的選項都已正確填寫。** 如果有任何未填寫的，請手動勾選。
+
+## 🛠️ 疑難排解
+
+1.  **語言設定：** 某些學校系統可能需要您將介面語言設定為正體中文 (`zh_tw`) 才能確保選項文字和程式碼匹配。
+
+---
+
+**備註：**
+
+*   這個腳本會自動偵測評量頁面上的動態前綴，因此理論上可以適用於不同課程的評量頁面。
+*   它預設會勾選「非常同意」選項 (value="5") 或「a」選項 (value="a")。如果您的評量有其他選項值或預設，請自行手動調整。
+*   **建議在提交評量前，務必仔細檢查所有選項，以確保沒有遺漏或錯誤。**
