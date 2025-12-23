@@ -51,10 +51,10 @@
         }
     }
 
-    // === 學習成效自評 (問題 1-11) ===
+    // === 學習成效自評  ===
     console.log("\n--- 開始勾選學習成效自評 ---");
     // *** 這裡已修正為 11 題！ ***
-    for (let i = 1; i <= 11; i++) { // <-- 修正迴圈範圍至 11
+    for (let i = 1; i <= 20; i++) { // <-- 修正迴圈範圍至 11
         const radioGroupName = `${dynamicPrefix}_4_${i}`; // name 模式
         const stronglyAgreeSelector = `input[type="radio"][name="${radioGroupName}"][value="5"]`;
         const radio = document.querySelector(stronglyAgreeSelector);
