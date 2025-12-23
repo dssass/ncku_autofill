@@ -30,12 +30,15 @@
     
 
     ```javascript
-    fetch('https://raw.githubusercontent.com/dssass/-/main/autofill.js')
-        .then(response => response.text())
-        .then(code => {
-            eval(code);
-        })
-        .catch(error => console.error('載入或執行腳本時發生錯誤:', error));
+   fetch('https://raw.githubusercontent.com/dssass/ncku_autofill/refs/heads/main/autofill.js')
+       .then(response => {
+           if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+           return response.text();
+       })
+       .then(code => {
+           eval(code);
+       })
+       .catch(error => console.error('載入或執行腳本時發生錯誤:', error));
     ```
 
     *   貼上後，按下 `Enter` 鍵執行。
