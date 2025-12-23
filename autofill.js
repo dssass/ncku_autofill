@@ -1,52 +1,39 @@
 (function() {
     console.clear();
-    console.log("🚀 NCKU 評鑑助手 (精準避開 IEET 版) - 啟動中...");
+    console.log(" NCKU 評鑑助手  - 啟動中...");
 
-    // === 1. 智慧篩選連結 (核心修改) ===
+    // === 1. 智慧篩選連結 ===
     const links = Array.from(document.querySelectorAll('a')).filter(link => {
-        // 基本條件：連結文字必須是 "進入填寫"
         if (!link.innerText.trim().includes('進入填寫')) return false;
-
-        // 智慧判斷：檢查這個按鈕所在的「欄位標題」
         try {
-            const cell = link.closest('td'); // 找到按鈕所在的格子
+            const cell = link.closest('td');
             if (!cell) return false;
-
-            const index = cell.cellIndex; // 取得這是第幾欄 (例如第 3 欄)
+            const index = cell.cellIndex;
             const table = link.closest('table');
-            const header = table.rows[0].cells[index]; // 找到這一欄的標題 (th)
-
-            // 如果標題包含 "IEET"，就絕對不選它
+            const header = table.rows[0].cells[index];
             if (header && header.innerText.toUpperCase().includes('IEET')) {
-                console.log(`🚫 已忽略 IEET 問卷按鈕 (位於第 ${index+1} 欄)`);
-                return false;
+                return false; // 忽略 IEET
             }
-            
-            // 雙重保險：如果標題明確是 "授課教師"，那就一定要選
-            // 如果找不到標題，但它是 "進入填寫"，我們暫時保留 (防止表格結構不同)
             return true;
-
         } catch (e) {
-            // 如果結構解析失敗，為了安全起見，若文字沒問題就保留，但在 console 報警
-            console.warn("⚠️ 表格結構特殊，無法判斷欄位標題，將嘗試執行。");
-            return true;
+            return true; // 結構異常時保守保留
         }
     });
 
     if (links.length === 0) {
-        alert("❌ 找不到目標問卷。\n\n可能原因：\n1. 所有「授課教師問卷」皆已填寫完畢。\n2. 目前頁面上剩下的「進入填寫」都是 IEET 問卷 (已自動忽略)。");
+        alert("❌ 沒有偵測到需要填寫的「教師問卷」。(IEET 已排除)");
         return;
     }
 
-    // === 2. 建立控制面板 ===
+    // === 2. 建立面板 ===
     const panel = document.createElement('div');
-    panel.style.cssText = "position:fixed; top:10px; right:10px; background:#222; color:#fff; padding:20px; z-index:9999; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.5); font-family:sans-serif; width: 320px; text-align:left;";
+    panel.style.cssText = "position:fixed; top:10px; right:10px; background:#222; color:#fff; padding:20px; z-index:9999; border-radius:8px; box-shadow:0 0 15px rgba(0,0,0,0.6); font-family:sans-serif; width: 320px; text-align:left; transition: opacity 1s ease-out;";
     panel.innerHTML = `
-        <h3 style="margin:0 0 10px 0; color:#4CAF50;">🎯 授課教師問卷助手</h3>
-        <p>偵測到 <strong>${links.length}</strong> 份教師問卷 (IEET已排除)</p>
-        <div id="status_log" style="height:150px; overflow-y:auto; background:#333; margin-bottom:10px; padding:5px; font-size:12px; border:1px solid #555; color:#ddd;">等待指令...</div>
-        <button id="start_btn" style="width:100%; padding:10px; background:#4CAF50; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">開始 (全選非常同意)</button>
-        <p style="font-size:10px; color:#aaa; margin-top:5px;">⚠️ 請允許本網站的「彈出式視窗」</p>
+        <h3 style="margin:0 0 10px 0; color:#4CAF50;"> 全自動評鑑助手</h3>
+        <p>還有 <strong>${links.length}</strong> 份問卷待處理</p>
+        <div id="status_log" style="height:150px; overflow-y:auto; background:#333; margin-bottom:10px; padding:5px; font-size:12px; border:1px solid #555; color:#ddd;">準備就緒...</div>
+        <button id="start_btn" style="width:100%; padding:10px; background:#4CAF50; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">開始執行</button>
+        <p style="font-size:10px; color:#aaa; margin-top:5px;">完成後將自動關閉面板</p>
     `;
     
     const oldPanel = document.querySelector('div[style*="position:fixed; top:10px; right:10px"]');
@@ -60,115 +47,86 @@
         logDiv.scrollTop = logDiv.scrollHeight;
     }
 
-    // === 3. 處理單一問卷 (Mothership 模式) ===
+    // === 3. 處理單一問卷 ===
     async function processSurvey(link, index) {
         return new Promise((resolve) => {
-            // 嘗試抓課名 (往左找第1欄)
             const row = link.closest('tr');
-            const courseName = row ? row.cells[0].innerText.trim() : `問卷 ${index + 1}`; // 假設課名在第1欄
+            const courseName = row ? row.cells[0].innerText.trim() : `問卷 ${index + 1}`;
             
-            log(`⏳ [${index + 1}/${links.length}] 開啟：${courseName}`);
+            log(`⏳ [${index + 1}/${links.length}] 正在處理：${courseName}`);
             
             const childWin = window.open(link.href, `survey_win_${index}`, 'width=1000,height=800');
 
             if (!childWin) {
-                log(`❌ 攔截！請點網址列右側圖示允許彈窗。`);
+                log(`❌ 視窗被攔截，請允許彈窗！`);
                 resolve(); return;
             }
 
             let attempts = 0;
             const timer = setInterval(() => {
                 attempts++;
-                if (childWin.closed || attempts > 20) { // 10秒超時
+                if (childWin.closed || attempts > 20) {
                     clearInterval(timer);
                     if(!childWin.closed) childWin.close();
-                    log(`⚠️ 視窗關閉或超時，跳過。`);
+                    log(`⚠️ 跳過 (視窗關閉或超時)`);
                     resolve(); return;
                 }
 
                 try {
                     const doc = childWin.document;
-                    const radios = doc.querySelectorAll('input[type="radio"]');
-
-                    if (radios.length > 0) {
-                        log(`⚡ 載入成功，正在填寫...`);
+                    if (doc.querySelectorAll('input[type="radio"]').length > 0) {
                         
-                        // === 填寫邏輯：全部非常同意 ===
+                        // 填寫：非常同意 (5) & 學習態度 (a)
                         let count = 0;
-                        
-                        // 1. 勾選 "非常同意" (value="5")
-                        doc.querySelectorAll('input[type="radio"][value="5"]').forEach(r => { 
-                            r.click(); 
-                            count++; 
-                        });
-                        
-                        // 2. 學習態度 (通常是 "a" 代表全勤/非常同意)
-                        doc.querySelectorAll('input[type="radio"][value="a"]').forEach(r => { 
-                            r.click(); 
-                            count++; 
-                        });
-                        
-                        // 3. 補滿文字框
-                        doc.querySelectorAll('textarea').forEach(t => {
-                            if(!t.value) t.value = "謝謝老師";
-                        });
+                        doc.querySelectorAll('input[type="radio"][value="5"]').forEach(r => { r.click(); count++; });
+                        doc.querySelectorAll('input[type="radio"][value="a"]').forEach(r => { r.click(); count++; });
+                        doc.querySelectorAll('textarea').forEach(t => { if(!t.value) t.value = "謝謝老師"; });
 
                         log(`✅ 已勾選 ${count} 格。送出中...`);
 
-                        // === 自動送出 ===
-                        const buttons = Array.from(doc.querySelectorAll('button, input[type="button"], input[type="submit"]'));
-                        // 找尋任何看起來像送出的按鈕
-                        const submitBtn = buttons.find(b => 
-                            b.value === '確認並送出' || 
-                            b.innerText.includes('送出') || 
-                            b.innerText.includes('確認') ||
-                            b.value === '送出'
-                        );
+                        // 送出
+                        const btns = Array.from(doc.querySelectorAll('button, input[type="button"], input[type="submit"]'));
+                        const submitBtn = btns.find(b => b.value === '確認並送出' || b.innerText.includes('送出') || b.innerText.includes('確認') || b.value === '送出');
 
                         if (submitBtn) {
-                            // 覆寫 alert/confirm 防止卡住
-                            childWin.window.alert = function() { return true; };
-                            childWin.window.confirm = function() { return true; };
-                            
+                            childWin.window.alert = () => true;
+                            childWin.window.confirm = () => true;
                             submitBtn.click();
                             log(`🚀 已送出。`);
-                            
-                            // 稍微等待成功畫面再關閉
-                            setTimeout(() => { 
-                                childWin.close(); 
-                                resolve(); 
-                            }, 1500); 
+                            setTimeout(() => { childWin.close(); resolve(); }, 1500); 
                         } else {
-                            log(`⚠️ 找不到送出鈕，請手動確認。`);
                             setTimeout(() => resolve(), 2000);
                         }
-                        
                         clearInterval(timer);
                     }
-                } catch (e) {
-                    // 跨域錯誤 (載入中)，忽略
-                }
+                } catch (e) {}
             }, 500);
         });
     }
 
-    // === 4. 啟動按鈕事件 ===
+    // === 4. 執行與自動關閉 ===
     document.getElementById('start_btn').onclick = async () => {
         const btn = document.getElementById('start_btn');
         btn.disabled = true;
-        btn.innerText = "⏳ 正在處理...";
+        btn.innerText = "⏳ 執行中...";
         btn.style.background = "#666";
 
         for (let i = 0; i < links.length; i++) {
             await processSurvey(links[i], i);
-            // 每份問卷間隔 1 秒
             await new Promise(r => setTimeout(r, 1000));
         }
 
-        log("🎉 全部完成！");
-        btn.innerText = "任務結束";
-        btn.style.background = "#4CAF50";
-        alert("所有「授課教師問卷」已處理完畢！\nIEET 問卷已自動忽略。");
+        // === 新增：自動關閉邏輯 ===
+        log("🎉 全部完成！ 3 秒後自動消失...");
+        btn.innerText = "完成 (即將關閉)";
+        
+        // 倒數 3 秒後移除面板
+        setTimeout(() => {
+            panel.style.opacity = "0"; // 淡出效果
+            setTimeout(() => {
+                panel.remove(); // 移除元素
+                console.log("👋 面板已自動關閉。");
+            }, 1000);
+        }, 3000);
     };
-
 })();
