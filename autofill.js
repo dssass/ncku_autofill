@@ -1,6 +1,6 @@
 (function() {
     console.clear();
-    console.log(" NCKU 評鑑助手  - 啟動中...");
+    console.log("🚀 NCKU 評鑑助手 (自動關閉版) - 啟動中...");
 
     // === 1. 智慧篩選連結 ===
     const links = Array.from(document.querySelectorAll('a')).filter(link => {
@@ -29,7 +29,7 @@
     const panel = document.createElement('div');
     panel.style.cssText = "position:fixed; top:10px; right:10px; background:#222; color:#fff; padding:20px; z-index:9999; border-radius:8px; box-shadow:0 0 15px rgba(0,0,0,0.6); font-family:sans-serif; width: 320px; text-align:left; transition: opacity 1s ease-out;";
     panel.innerHTML = `
-        <h3 style="margin:0 0 10px 0; color:#4CAF50;"> 全自動評鑑助手</h3>
+        <h3 style="margin:0 0 10px 0; color:#4CAF50;">🤖 全自動評鑑助手</h3>
         <p>還有 <strong>${links.length}</strong> 份問卷待處理</p>
         <div id="status_log" style="height:150px; overflow-y:auto; background:#333; margin-bottom:10px; padding:5px; font-size:12px; border:1px solid #555; color:#ddd;">準備就緒...</div>
         <button id="start_btn" style="width:100%; padding:10px; background:#4CAF50; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">開始執行</button>
